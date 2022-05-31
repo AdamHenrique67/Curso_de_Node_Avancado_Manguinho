@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "target": "ES2021",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node", //Permite importar pela nome da pasta(automaticamento vai buscar o arquivo index dentro da pasta)
+    "esModuleInterop": true, //Resolve compatibilidade entre libs diferentes(algumas usam require, outras import, e etc)
+    "baseUrl": "src",
+    "paths": {
+      "@/*":["*"],                    //Permite o use do @ lib  npm i module-alias
+      "@/tests/*":["../tests/*"],
+    },
+    "strict": true                    //Obriga as seguir certas regras com tipagens e tals. Garante qualidade no código
+  },
+  "include": ["src"]
+}
