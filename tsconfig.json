@@ -16,5 +16,5 @@
     },
     "strict": true                    //Obriga as seguir certas regras com tipagens e tals. Garante qualidade no código
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }
