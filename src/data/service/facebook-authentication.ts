@@ -13,10 +13,10 @@ export class FacebookAuthenticationService {
     const fbData = await this.facebookApi.loadUser({ token: params.token }) // Poderia passar apenas params nesse caso
     if (fbData !== undefined) {
       const accountData = await this.userAccountRepo.load({ email: fbData.email })
-      if (accountData?.name !== undefined) {
+      if (accountData !== undefined) {
         await this.userAccountRepo.updateWithFacebook({
           id: accountData.id,
-          name: accountData.name,
+          name: accountData.name ?? fbData.name,
           facebookId: fbData.facebookId
         })
       } else {
