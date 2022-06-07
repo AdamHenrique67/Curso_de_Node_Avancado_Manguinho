@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "experimentalDecorators": true,
     "outDir": "dist",
     "rootDirs": ["src", "tests"],
     "target": "ES2021",
@@ -14,7 +15,8 @@
       "@/*":["*"],                    //Permite o use do @ lib  npm i module-alias
       "@/tests/*":["../tests/*"],
     },
-    "strict": true                    //Obriga as seguir certas regras com tipagens e tals. Garante qualidade no código
+    "strict": true,   //Obriga as seguir certas regras com tipagens e tals. Garante qualidade no código
+    "emitDecoratorMetadata": true,
   },
   "include": ["src", "tests"]
 }
