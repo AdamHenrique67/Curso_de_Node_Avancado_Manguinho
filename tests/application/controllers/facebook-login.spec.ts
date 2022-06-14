@@ -2,7 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { FacebookAuthentication } from '@/domain/features'
 import { AccessToken } from '@/domain/models'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { RequiredFieldError, ServerError } from '@/application/errors'
+import { RequiredFieldError, ServerError, UnauthorizedError } from '@/application/errors'
 import { FacebookLoginController } from '@/application/controllers/facebook-login'
 
 describe('FacebookLoginController', () => {
@@ -58,7 +58,7 @@ describe('FacebookLoginController', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 401,
-      data: new AuthenticationError()
+      data: new UnauthorizedError()
     })
   })
 
