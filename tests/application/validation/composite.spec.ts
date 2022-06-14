@@ -1,8 +1,8 @@
 import { mock, MockProxy } from 'jest-mock-extended'
-import { Validator, ValidatorComposite } from '@/application/validation'
+import { Validator, ValidationComposite } from '@/application/validation'
 
 describe('ValidationComposite', () => {
-  let sut: ValidatorComposite
+  let sut: ValidationComposite
   let validator1: MockProxy<Validator>
   let validator2: MockProxy<Validator>
   let validators: Validator[]
@@ -16,7 +16,7 @@ describe('ValidationComposite', () => {
 
   beforeEach(() => {
     validators = [validator1, validator2]
-    sut = new ValidatorComposite(validators)
+    sut = new ValidationComposite(validators)
   })
 
   test('should return undefined if all Validators return undefined', () => {
