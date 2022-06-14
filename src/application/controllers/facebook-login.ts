@@ -1,35 +1,29 @@
 import { FacebookAuthentication } from '@/domain/features'
 import { AccessToken } from '@/domain/models'
-import { badRequest, HttpResponse, serverError, unauthorized, ok } from '@/application/helpers'
-import { RequiredStringValidator, ValidationComposite } from '../validation'
+import { HttpResponse, unauthorized, ok } from '@/application/helpers'
+import { ValidationBuilder, Validator } from '../validation'
+import { Controller } from './controller'
 
 type HttpRequest = {
   token: string
 }
 
 type Model = Error | {accessToken: string}
-export class FacebookLoginController {
-  constructor (private readonly facebookAuthentication: FacebookAuthentication) {}
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
-    try {
-      const error = this.validate(httpRequest)
-      if (error) {
-        return badRequest(error)
-      }
-      const result = await this.facebookAuthentication.perform({ token: httpRequest.token })
-      if (result instanceof AccessToken) {
-        return ok({ accessToken: result.value })
-      } else {
-        return unauthorized()
-      }
-    } catch (error) {
-      return serverError(error as Error)
-    }
+export class FacebookLoginController extends Controller {
+  constructor (private readonly facebookAuthentication: FacebookAuthentication) {
+    super()
   }
 
-  private validate (httpRequest: HttpRequest): Error | undefined {
-    const validators = [new RequiredStringValidator(httpRequest.token, 'token')]
-    const validator = new ValidationComposite(validators)
-    return validator.validate()
+  async perform (httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
+    const accessToken = await this.facebookAuthentication.perform({ token: httpRequest.token })
+    return accessToken instanceof AccessToken
+      ? ok({ accessToken: accessToken.value })
+      : unauthorized()
+  }
+
+  override buildValidators (httpRequest: HttpRequest): Validator[] {
+    return [
+      ...ValidationBuilder.of({ value: httpRequest.token, fieldName: 'token' }).required().build()
+    ]
   }
 }
