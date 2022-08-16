@@ -1,4 +1,4 @@
-import { FacebookAuthenticationService } from '@/data/service'
+import { FacebookAuthenticationService } from '@/domain/service'
 import { makeFacebookApi } from '@/main/factories/apis'
 import { makePgUserAccountRepo } from '@/main/factories/repos'
 import { makeJwtTokenGenerator } from '@/main/factories/crypto'

@@ -1,4 +1,4 @@
-import { LoadFacebookUserApi } from '@/data/contracts/apis'
+import { LoadFacebookUserApi } from '@/domain/contracts/apis'
 import { AuthenticationError } from '@/domain/errors'
 import { FacebookAuthentication } from '@/domain/features'
 import { AccessToken, FacebookAccount } from '@/domain/models'
