@@ -1,25 +1,25 @@
-import { LoadFacebookUserApi } from '@/domain/contracts/apis'
+import { LoadFacebookUser } from '@/domain/contracts/gateways'
 import { AuthenticationError } from '@/domain/errors'
 import { AccessToken, FacebookAccount } from '@/domain/entities'
-import { TokenGenerator } from '../contracts/crypto'
-import { SaveFacebookAccountRepository, LoadUserAccountRepository } from '../contracts/repos'
+import { TokenGenerator } from '../contracts/gateways'
+import { SaveFacebookAccount, LoadUserAccount } from '../contracts/repos'
 
 type Setup = (
-  facebookApi: LoadFacebookUserApi,
-  userAccountRepo: LoadUserAccountRepository & SaveFacebookAccountRepository,
-  crypto: TokenGenerator
+  facebook: LoadFacebookUser,
+  userAccountRepo: LoadUserAccount & SaveFacebookAccount,
+  token: TokenGenerator
 ) => FacebookAuthentication
 
 export type FacebookAuthentication = (params: { token: string }) => Promise<{ accessToken: string }>
 
-export const setupFacebookAuthentication: Setup = (facebookApi, userAccountRepo, crypto): FacebookAuthentication =>
+export const setupFacebookAuthentication: Setup = (facebook, userAccountRepo, token): FacebookAuthentication =>
   async (params) => {
-    const fbData = await facebookApi.loadUser({ token: params.token }) // Poderia passar apenas params nesse caso
+    const fbData = await facebook.loadUser({ token: params.token }) // Poderia passar apenas params nesse caso
     if (fbData !== undefined) {
       const accountData = await userAccountRepo.load({ email: fbData.email })
       const fbAccount = new FacebookAccount(fbData, accountData)
       const { id } = await userAccountRepo.saveWithFacebook(fbAccount)
-      const accessToken = await crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMS })
+      const accessToken = await token.generate({ key: id, expirationInMs: AccessToken.expirationInMS })
       return { accessToken }
     }
     throw new AuthenticationError()
