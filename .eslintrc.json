@@ -8,6 +8,7 @@
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/return-await": "off",
     "@typescript-eslint/strict-boolean-expressions": "off",
-    "no-trailing-spaces": "off"
+    "no-trailing-spaces": "off",
+    "@typescript-eslint/no-non-null-assertion": "off"
   }
 }
