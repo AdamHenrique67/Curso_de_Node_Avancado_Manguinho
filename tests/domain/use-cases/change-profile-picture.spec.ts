@@ -20,7 +20,7 @@ describe('ChangeProfilePicture', () => {
     fileStorage = mock()
     fileStorage.upload.mockResolvedValue('any_url')
     crypto = mock()
-    crypto.generateUuid.mockReturnValue(uuid)
+    crypto.uuid.mockReturnValue(uuid)
     userProfileRepo = mock()
     userProfileRepo.load.mockResolvedValue({ name: 'Adam Henrique Anicio Marcal' })
   })

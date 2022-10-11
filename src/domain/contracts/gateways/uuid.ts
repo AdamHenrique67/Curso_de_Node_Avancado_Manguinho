@@ -1,5 +1,5 @@
 export interface UUIDGenerator {
-  generateUuid: (input: UUIDGenerator.Input) => UUIDGenerator.Output
+  uuid: (input: UUIDGenerator.Input) => UUIDGenerator.Output
 }
 
 export namespace UUIDGenerator {
