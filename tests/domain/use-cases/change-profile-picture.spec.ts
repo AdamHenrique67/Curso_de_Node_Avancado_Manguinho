@@ -56,6 +56,14 @@ describe('ChangeProfilePicture', () => {
     expect(userProfileRepo.load).toHaveBeenCalledTimes(1)
   })
 
+  test('should call LoadUserProfile returns undefined', async () => {
+    userProfileRepo.load.mockResolvedValueOnce(undefined)
+    await sut({ id: 'any_id', file: undefined })
+
+    expect(userProfileRepo.load).toHaveBeenCalledWith({ id: 'any_id' })
+    expect(userProfileRepo.load).toHaveBeenCalledTimes(1)
+  })
+
   test('should not call LoadUserProfile with file exists', async () => {
     await sut({ id: 'any_id', file })
 
