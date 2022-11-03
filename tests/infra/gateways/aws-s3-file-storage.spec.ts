@@ -1,6 +1,5 @@
 import { config, S3 } from 'aws-sdk'
 import { AwsS3FileStorage } from '@/infra/gateways/aws-s3-file-storage'
-import exp from 'constants'
 
 jest.mock('aws-sdk')
 
