@@ -3,7 +3,7 @@ import { LoadUserProfile, SaveUserPicture } from '@/domain/contracts/repos'
 import { UserProfile } from '@/domain/entities'
 
 type Input = { id: string, file?: Buffer }
-type Output = { id?: string, file?: string}
+type Output = { initials?: string, pictureUrl?: string}
 export type ChangeProfilePicture = (input: Input) => Promise<Output>
 type Setup = (fileStorage: UploadFile & DeleteFile, crypto: UUIDGenerator, userProfileRepo: SaveUserPicture & LoadUserProfile) => ChangeProfilePicture
 

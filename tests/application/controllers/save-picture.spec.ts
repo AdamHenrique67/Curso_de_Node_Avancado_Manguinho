@@ -1,13 +1,13 @@
 import { RequiredFieldError } from '@/application/errors'
-import { badRequest, HttpResponse } from '@/application/helpers'
+import { badRequest, HttpResponse, ok } from '@/application/helpers'
 import { ChangeProfilePicture } from '@/domain/use-cases'
 
 type HttpRequest = { file: { buffer: Buffer, mimeType: string }, userId: string }
-type Model = Error
+type Model = Error | { initials?: string, pictureUrl?: string}
 
 class SavePictureController {
   constructor (private readonly changeProfilePicture: ChangeProfilePicture) {}
-  async perform ({ file, userId }: HttpRequest): Promise<HttpResponse<Model> | undefined> {
+  async perform ({ file, userId }: HttpRequest): Promise<HttpResponse<Model>> {
     if (!file || file.buffer.length === 0) {
       return badRequest(new RequiredFieldError('file'))
     }
@@ -17,7 +17,8 @@ class SavePictureController {
     if (file.buffer.length > 5 * 1024 * 1024) {
       return badRequest(new MaxFileSizeError(5))
     }
-    await this.changeProfilePicture({ id: userId, file: file.buffer })
+    const result = await this.changeProfilePicture({ id: userId, file: file.buffer })
+    return ok(result)
   }
 }
 
@@ -48,7 +49,7 @@ describe('SavePictureController', () => {
     mimeType = 'image/png'
     file = { buffer, mimeType }
     userId = 'any_user_id'
-    changeProfilePicture = jest.fn()
+    changeProfilePicture = jest.fn().mockResolvedValue({ initials: 'any_initials', pictureUrl: 'any_initials' })
   })
 
   beforeEach(() => {
@@ -133,5 +134,14 @@ describe('SavePictureController', () => {
 
     expect(changeProfilePicture).toHaveBeenCalledWith({ id: userId, file: buffer })
     expect(changeProfilePicture).toHaveBeenCalledTimes(1)
+  })
+
+  test('ChangeProfilePicture return data on sucess', async () => {
+    const httpResponse = await sut.perform({ file, userId })
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: { initials: 'any_initials', pictureUrl: 'any_initials' }
+    })
   })
 })
