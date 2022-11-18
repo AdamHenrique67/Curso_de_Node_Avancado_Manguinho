@@ -12,7 +12,7 @@ export class PgUserProfileRepository implements SaveUserPicture {
     const pgUserRepo = getRepository(PgUser)
     const pgUser = await pgUserRepo.findOne({ id: parseInt(id) })
     if (pgUser) {
-      return { name: pgUser.name }
+      return { name: pgUser.name ?? undefined }
     }
   }
 }

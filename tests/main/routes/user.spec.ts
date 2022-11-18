@@ -3,15 +3,19 @@ import { app } from '@/main/config/app'
 import { IBackup } from 'pg-mem'
 import { makeFakeDB } from '@/../tests/infra/repos/postgres/mocks'
 import { PgUser } from '@/infra/repos/postgres/entities'
-import { getConnection } from 'typeorm'
+import { getConnection, getRepository, Repository } from 'typeorm'
+import { env } from '@/main/config/env'
+import { sign } from 'jsonwebtoken'
 
 describe('User routes', () => {
   describe('DELETE /users/picture', () => {
     let backup: IBackup
+    let pgUserRepo: Repository<PgUser>
 
     beforeAll(async () => {
       const db = await makeFakeDB([PgUser])
       backup = db.backup()
+      pgUserRepo = getRepository(PgUser)
     })
 
     beforeEach(() => {
@@ -27,6 +31,18 @@ describe('User routes', () => {
         .delete('/api/users/picture')
 
       expect(status).toBe(403)
+    })
+
+    test('should return 204', async () => {
+      const { id } = await pgUserRepo.save({ email: 'any_email' })
+      const authorization = sign({ key: id }, env.jwtSecret)
+
+      const { status, body } = await request(app)
+        .delete('/api/users/picture')
+        .set({ authorization })
+
+      expect(status).toBe(204)
+      expect(body).toEqual({ })
     })
   })
 })
