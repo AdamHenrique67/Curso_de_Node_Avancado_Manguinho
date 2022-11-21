@@ -5,4 +5,5 @@ import { makeSavePictureController } from '../factories/controllers'
 
 export default (router: Router): void => {
   router.delete('/users/picture', auth, adapt(makeSavePictureController()))
+  router.put('/users/picture', auth)
 }
