@@ -35,6 +35,7 @@
     "eslint-plugin-promise": "^5.2.0",
     "jest": "^28.1.0",
     "jest-mock-extended": "^2.0.6",
+    "mockdate": "^3.0.5",
     "pg-mem": "^2.4.11",
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.3",
