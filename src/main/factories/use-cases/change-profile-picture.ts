@@ -1,6 +1,6 @@
 import { ChangeProfilePicture, setupChangeProfilePicture } from '@/domain/use-cases'
 import { makeAwsS3FileStorage, makeUniqueId } from '../gateways'
-import { makePgUserProfileRepo } from '../repos'
+import { makePgUserProfileRepo } from '@/main/factories/repos/postgress'
 
 export const makeCangeProfilePicture = (): ChangeProfilePicture => {
   return setupChangeProfilePicture(
