@@ -1,34 +1,7 @@
 import { mock, MockProxy } from 'jest-mock-extended'
 import { Controller } from '@/application/controllers'
-import { HttpResponse } from '@/application/helpers'
-
-class DbTransactionController {
-  constructor (
-    private readonly decoratee: Controller,
-    private readonly db: DbTransaction
-  ) {}
-
-  async perform (httpRequest: any): Promise<HttpResponse | undefined> {
-    await this.db.openTransaction()
-    try {
-      const httpResponse = await this.decoratee.perform(httpRequest)
-      await this.db.commit()
-      return httpResponse
-    } catch (error) {
-      await this.db.rollback()
-      throw error
-    } finally {
-      await this.db.closeTransaction()
-    }
-  }
-}
-
-interface DbTransaction {
-  openTransaction: () => Promise<void>
-  closeTransaction: () => Promise<void>
-  commit: () => Promise<void>
-  rollback: () => Promise<void>
-}
+import { DbTransaction } from '@/application/contracts'
+import { DbTransactionController } from '@/application/decorators'
 
 describe('DbTransactionController', () => {
   let db: MockProxy<DbTransaction>
@@ -43,6 +16,10 @@ describe('DbTransactionController', () => {
 
   beforeEach(() => {
     sut = new DbTransactionController(decoratee, db)
+  })
+
+  test('should extend Controller', async () => {
+    expect(sut).toBeInstanceOf(Controller)
   })
 
   test('should open transaction', async () => {
