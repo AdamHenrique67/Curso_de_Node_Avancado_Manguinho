@@ -13,10 +13,11 @@ class DbTransactionController {
     try {
       const httpResponse = await this.decoratee.perform(httpRequest)
       await this.db.commit()
-      await this.db.closeTransaction()
       return httpResponse
-    } catch {
+    } catch (error) {
       await this.db.rollback()
+      throw error
+    } finally {
       await this.db.closeTransaction()
     }
   }
@@ -71,18 +72,27 @@ describe('DbTransactionController', () => {
   test('should call roolback and close transaction on failure', async () => {
     decoratee.perform.mockRejectedValueOnce(new Error('perform_error'))
 
-    await sut.perform({ any: 'any' })
-
-    expect(db.commit).not.toBeCalledWith()
-    expect(db.rollback).toHaveBeenCalledWith()
-    expect(db.rollback).toHaveBeenCalledTimes(1)
-    expect(db.closeTransaction).toHaveBeenCalledWith()
-    expect(db.closeTransaction).toHaveBeenCalledTimes(1)
+    sut.perform({ any: 'any' }).catch(() => {
+      expect(db.commit).not.toBeCalledWith()
+      expect(db.rollback).toHaveBeenCalledWith()
+      expect(db.rollback).toHaveBeenCalledTimes(1)
+      expect(db.closeTransaction).toHaveBeenCalledWith()
+      expect(db.closeTransaction).toHaveBeenCalledTimes(1)
+    })
   })
 
   test('should return same result as decoratee on success', async () => {
     const httpResponse = await sut.perform({ any: 'any' })
 
     expect(httpResponse).toEqual({ statusCode: 204, data: null })
+  })
+
+  test('should rethrow if decoratee throws', async () => {
+    const error = new Error('decoratee_error')
+    decoratee.perform.mockRejectedValueOnce(error)
+
+    const promise = sut.perform({ any: 'any' })
+
+    await expect(promise).rejects.toThrow(error)
   })
 })
